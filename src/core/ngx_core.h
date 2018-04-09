@@ -27,11 +27,18 @@ typedef void (*ngx_event_handler_pt)(ngx_event_t *ev);
 typedef void (*ngx_connection_handler_pt)(ngx_connection_t *c);
 
 
+//成功，nginx会继续执行该请求的后续动作
 #define  NGX_OK          0
+//错误，会调用ngx_http_terminate_request终止请求
+//如果还有子post，会在执行完post后再终止
 #define  NGX_ERROR      -1
 #define  NGX_AGAIN      -2
 #define  NGX_BUSY       -3
+//表示到此为止，HTTP框架将不在继续执行这个请求
+//这时会检查连接的类型，如果是keeplive，就会保持HTTP连接，然后把控制权交给Nginx
+//这是为了保证nginx的高性能，对于一个耗时操作，会分成两部分，先执行一半，然后返回NGX_DONE，然后再回调执行另一半
 #define  NGX_DONE       -4
+//继续在NGX_HTTP_CONTENT_PHASE阶段寻找下一个感兴趣的HTTP模块
 #define  NGX_DECLINED   -5
 #define  NGX_ABORT      -6
 

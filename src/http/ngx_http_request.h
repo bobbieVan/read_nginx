@@ -24,6 +24,10 @@
 #define NGX_HTTP_VERSION_10                1000
 #define NGX_HTTP_VERSION_11                1001
 
+/**
+ * 对客户端请求方式的定义，nginx会根据请求方式，先转化成ngx_unit_t(无符号整数),再进行比较
+ * 因为整数比较比字符串的比对要快得多
+ */
 #define NGX_HTTP_UNKNOWN                   0x0001
 #define NGX_HTTP_GET                       0x0002
 #define NGX_HTTP_HEAD                      0x0004
@@ -95,6 +99,7 @@
 /* Our own HTTP codes */
 
 /* The special code to close connection without any response */
+//nginx自己定义的状态码，不是RFC标准，用于要求HTTP框架直接关闭连接
 #define NGX_HTTP_CLOSE                     444
 
 #define NGX_HTTP_NGINX_CODES               494
@@ -376,16 +381,18 @@ struct ngx_http_request_s {
     time_t                            lingering_time;
     time_t                            start_sec;
     ngx_msec_t                        start_msec;
-
+    //客户端请求方式，GET POST等，这是转化后的无符号整数
     ngx_uint_t                        method;
     ngx_uint_t                        http_version;
 
     ngx_str_t                         request_line;
+    //指向请求头的url
     ngx_str_t                         uri;
     ngx_str_t                         args;
     ngx_str_t                         exten;
     ngx_str_t                         unparsed_uri;
-
+    //客户端请求方式，GET POST等，这是转化后的无符号整数
+    //实际上这个method_name指向的内存和下面request_start指向的是同一个内存
     ngx_str_t                         method_name;
     ngx_str_t                         http_protocol;
 
@@ -538,13 +545,18 @@ struct ngx_http_request_s {
      * a memory that can be reused after parsing a request line
      * via ngx_http_ephemeral_t
      */
-
+    //url开始的地方
     u_char                           *uri_start;
+    //url结束的地方
     u_char                           *uri_end;
+    //请求资源的扩展名，如 GET /a.txt HTTP/1.1 uri_ext就是txt
     u_char                           *uri_ext;
     u_char                           *args_start;
+    //请求头开始的地方，和上面的method_name指向的内存时同一个地方
+    //可以看出nginx对内存是特别节约
     u_char                           *request_start;
     u_char                           *request_end;
+    //请求方式结束的地方
     u_char                           *method_end;
     u_char                           *schema_start;
     u_char                           *schema_end;

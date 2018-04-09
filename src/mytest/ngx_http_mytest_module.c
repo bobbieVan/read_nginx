@@ -1,7 +1,13 @@
 #include <ngx_config.h>
 #include <ngx_core.h>
 #include <ngx_http.h>
-
+/**
+ * 整个大致流程
+ * 1,nginx读取到配置文件时，发现mytest模块
+ * 2,调用ngx_http_mytest_commands指定的ngx_http_mytest回调函数
+ * 3,ngx_http_mytest回调时设置处理HTTP的回调函数ngx_http_mytest_handler
+ *
+ */
 static ngx_int_t ngx_http_mytest_handler(ngx_http_request_t *r);
 static char *
 ngx_http_mytest(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
@@ -24,6 +30,22 @@ static ngx_command_t ngx_http_mytest_commands[] = {
 
 };
 //模块上下文
+//解析配置文件前调用
+//ngx_int_t   (*preconfiguration)(ngx_conf_t *cf);
+////完成配置文件的解析后调用
+//ngx_int_t   (*postconfiguration)(ngx_conf_t *cf);
+////当需要存储main级别的全局配置项(直属于http{...}块的配置项)时，可以通过此回调创建存储全局配置项的结构体
+//void       *(*create_main_conf)(ngx_conf_t *cf);
+////初始化mian级别的配置项
+//char       *(*init_main_conf)(ngx_conf_t *cf, void *conf);
+////当需要存储srv级别的配置项(直属于server{...}块的配置项)时，通过此回调创建存储srv的结构体
+//void       *(*create_srv_conf)(ngx_conf_t *cf);
+////用于合并main和srv级别下的同名配置项
+//char       *(*merge_srv_conf)(ngx_conf_t *cf, void *prev, void *conf);
+////当需要存储loc级别的配置项(直属于location{...}块配置项)时，实现回调
+//void       *(*create_loc_conf)(ngx_conf_t *cf);
+////合并srv和loc级别下的同名配置
+//char       *(*merge_loc_conf)(ngx_conf_t *cf, void *prev, void *conf);
 static ngx_http_module_t ngx_http_mytest_module_ctx = {
     NULL,
     NULL,
@@ -68,12 +90,15 @@ ngx_http_mytest(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 }
 
 //实际完成处理的回调函数
+/*
+ * r 是nginx已经处理完了的http请求头
+ */
 static ngx_int_t ngx_http_mytest_handler(ngx_http_request_t *r)
 {
     if (!(r->method & (NGX_HTTP_GET | NGX_HTTP_HEAD))) {
+        //非法请求方式 状态码 405
         return NGX_HTTP_NOT_ALLOWED;
     }
-
     ngx_int_t rc = ngx_http_discard_request_body(r);
     if (rc != NGX_OK) {
         return rc;
