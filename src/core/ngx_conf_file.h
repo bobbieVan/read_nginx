@@ -76,11 +76,17 @@
 
 
 struct ngx_command_s {
+    //配置项名字
     ngx_str_t             name;
+    //配置项类型，type将指定配置项可以出现的位置，例如出现在server{},location{}，以及它可以携带的参数个数
     ngx_uint_t            type;
+    //出现了name中指定的配置项后，会调用set处理配置项参数
     char               *(*set)(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+    //在配置文件中的偏移量
     ngx_uint_t            conf;
+    //用于使用预设的解析方法解析配置项，与conf配合使用
     ngx_uint_t            offset;
+    //配置项读取后的处理方法
     void                 *post;
 };
 
@@ -105,35 +111,62 @@ struct ngx_open_file_s {
 };
 
 
+//用于给下面的ctx_index,index,spare0,spare1,spare2,spare3,version赋值
 #define NGX_MODULE_V1          0, 0, 0, 0, 0, 0, 1
+//用于填充最后的保留字段
 #define NGX_MODULE_V1_PADDING  0, 0, 0, 0, 0, 0, 0, 0
 
 struct ngx_module_s {
+    //表示当前模块在这类模块中的序号,对于所有http模块,
+    //ctx_index是由核心模块ngx_http_module设置的
+    //表达优先级和模块位置
     ngx_uint_t            ctx_index;
+    //表示当前模块在所有模块中的序号
     ngx_uint_t            index;
 
+    //保留字段,未使用
     ngx_uint_t            spare0;
     ngx_uint_t            spare1;
     ngx_uint_t            spare2;
     ngx_uint_t            spare3;
-
+    //版本,目前只有1
     ngx_uint_t            version;
-
+    //用于指向一类模块的上下文结构体,模块上下文。指向特定类型模块的公共接口
     void                 *ctx;
+    //将处理nginx.conf中的配置项
     ngx_command_t        *commands;
+    //模块类型,HTTP_FILTER_MODULES，CORE_MODULES，EVENT_MODULES，HTTP_MODULES，HTTP_HEADERS_FILER_MODULE
+    //HTTP_FILTER_MODULES         --> http过滤模块
+    //
+    //CORE_MODULES                --> 核心模块
+    //
+    //EVENT_MODULES               --> 事件模块
+    //
+    //HTTP_MODULES                --> HTTP模块
+    //
+    //HTTP_HEADERS_FILER_MODULE   --> HTTP头部过滤模块
+    //还可以自定义新的模块
     ngx_uint_t            type;
 
+    /**
+     * 七个重要的模块回调点
+     */
+    //master进程启动时调用，但是目前框架从不调用，因此直接设置成NULL就行
     ngx_int_t           (*init_master)(ngx_log_t *log);
-
+    //初始化所有模块时被调用，master/worker模式下，在启动worker前完成
     ngx_int_t           (*init_module)(ngx_cycle_t *cycle);
-
+    //worker子进程已经产生，每个worker进程初始化过程会调用所有模块的init_process
     ngx_int_t           (*init_process)(ngx_cycle_t *cycle);
+    //由于nginx不支持多线程模式，所以init_thread在框架中没被调用过
     ngx_int_t           (*init_thread)(ngx_cycle_t *cycle);
+    //此函数也没被调用
     void                (*exit_thread)(ngx_cycle_t *cycle);
+    //worker进程退出前调用
     void                (*exit_process)(ngx_cycle_t *cycle);
-
+    //master退出前被调用
     void                (*exit_master)(ngx_cycle_t *cycle);
 
+    //尚未使用，用NGX_MODULE_V1_PADDING填充即可
     uintptr_t             spare_hook0;
     uintptr_t             spare_hook1;
     uintptr_t             spare_hook2;

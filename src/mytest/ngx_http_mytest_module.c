@@ -10,12 +10,18 @@ static ngx_command_t ngx_http_mytest_commands[] = {
     {
         ngx_string("mytest"),
         NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_HTTP_LMT_CONF|NGX_CONF_NOARGS,
+        //set回调函数，
+        //char               *(*set)(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+        //当某个配置快中出现mytest时，就会回调此函数
         ngx_http_mytest,
         NGX_HTTP_LOC_CONF_OFFSET,
         0,
         NULL
     },
+    //空的ngx_command_t用于表示数组结束
+    //#define ngx_null_command  { ngx_null_string, 0, NULL, 0, 0, NULL }
     ngx_null_command
+
 };
 //模块上下文
 static ngx_http_module_t ngx_http_mytest_module_ctx = {
@@ -31,8 +37,11 @@ static ngx_http_module_t ngx_http_mytest_module_ctx = {
 //新模块定义
 ngx_module_t ngx_http_mytest_module = {
     NGX_MODULE_V1,
+    //ctx,对于HTTP模块来说，ctx必须是ngx_http_module_t接口
     &ngx_http_mytest_module_ctx,
+    //commands,
     ngx_http_mytest_commands,
+    //定义http模块时，必须设置成NGX_HTTP_MODULE
     NGX_HTTP_MODULE,
     NULL,
     NULL,
@@ -52,6 +61,7 @@ ngx_http_mytest(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
 
+    //在NGX_HTTP_CONTENT_PHASE阶段会调用此回调函数
     clcf->handler = ngx_http_mytest_handler;
 
     return NGX_CONF_OK;

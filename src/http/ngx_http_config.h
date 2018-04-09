@@ -22,17 +22,33 @@ typedef struct {
 
 
 typedef struct {
+    //解析配置文件前调用
     ngx_int_t   (*preconfiguration)(ngx_conf_t *cf);
+    //完成配置文件的解析后调用
     ngx_int_t   (*postconfiguration)(ngx_conf_t *cf);
-
+    //当需要存储main级别的全局配置项(直属于http{...}块的配置项)时，可以通过此回调创建存储全局配置项的结构体
     void       *(*create_main_conf)(ngx_conf_t *cf);
+    //初始化mian级别的配置项
     char       *(*init_main_conf)(ngx_conf_t *cf, void *conf);
-
+    //当需要存储srv级别的配置项(直属于server{...}块的配置项)时，通过此回调创建存储srv的结构体
     void       *(*create_srv_conf)(ngx_conf_t *cf);
+    //用于合并main和srv级别下的同名配置项
     char       *(*merge_srv_conf)(ngx_conf_t *cf, void *prev, void *conf);
-
+    //当需要存储loc级别的配置项(直属于location{...}块配置项)时，实现回调
     void       *(*create_loc_conf)(ngx_conf_t *cf);
+    //合并srv和loc级别下的同名配置
     char       *(*merge_loc_conf)(ngx_conf_t *cf, void *prev, void *conf);
+    /**
+     * 此八个回调顺序可能是(取决于nginx.conf)
+     * creat_main_conf
+     * creat_srv_conf
+     * creat_loc_conf
+     * preconfiguration
+     * init_main_conf
+     * merge_srv_conf
+     * merge_loc_conf
+     * postconfiguration
+     */
 } ngx_http_module_t;
 
 
