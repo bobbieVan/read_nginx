@@ -18,16 +18,16 @@ typedef void *            ngx_buf_tag_t;
 typedef struct ngx_buf_s  ngx_buf_t;
 
 struct ngx_buf_s {
-    u_char          *pos;
-    u_char          *last;
-    off_t            file_pos;
-    off_t            file_last;
+    u_char          *pos;       //本次开始处理的内存地址
+    u_char          *last;      //有效的内存地址结束位置
+    off_t            file_pos;  //开始处理文件的位置
+    off_t            file_last; //截止文件的位置
 
     u_char          *start;         /* start of buffer */
     u_char          *end;           /* end of buffer */
-    ngx_buf_tag_t    tag;
-    ngx_file_t      *file;
-    ngx_buf_t       *shadow;
+    ngx_buf_tag_t    tag;       //当前缓冲区类型，哪个模块使用就指向哪个模块的地址
+    ngx_file_t      *file;      //引用的文件
+    ngx_buf_t       *shadow;    //影子缓冲区
 
 
     /* the buf's content could be changed */
