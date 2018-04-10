@@ -9,6 +9,8 @@
 #define _NGX_HTTP_REQUEST_H_INCLUDED_
 
 
+#include <ngx_core.h>
+
 #define NGX_HTTP_MAX_URI_CHANGES           10
 #define NGX_HTTP_MAX_SUBREQUESTS           50
 
@@ -169,10 +171,12 @@ typedef struct {
     ngx_uint_t                        offset;
 } ngx_http_header_out_t;
 
-
+//定义请求头
 typedef struct {
+    //所有解析过的HTTP头部都在headers链表中,每个元素都是ngx_table_elt_t，（key-value）
     ngx_list_t                        headers;
-
+    //下面每个ngx_table_elt_t都是RFC2616规范定义的HTPP头部实际指向链表headers中的成员
+    //实际数据只有一份，其余都是指针，又体现了nginx对内存的极度节约
     ngx_table_elt_t                  *host;
     ngx_table_elt_t                  *connection;
     ngx_table_elt_t                  *if_modified_since;
@@ -216,16 +220,17 @@ typedef struct {
     ngx_table_elt_t                  *overwrite;
     ngx_table_elt_t                  *date;
 #endif
-
+    //user和passwd只有ngc_http_auth_basic_module才会用，忽略
     ngx_str_t                         user;
     ngx_str_t                         passwd;
-
+    //cookies是数组保存的
     ngx_array_t                       cookies;
 
     ngx_str_t                         server;
+    //根据ngx_table_elt_t计算出HTTP包大小
     off_t                             content_length_n;
     time_t                            keep_alive_n;
-
+    //连接类型，0,NGX_HTTP_CONNECTION_CLOSE,NGX_HTTP_CONNECTION_KEEP_ALIVE
     unsigned                          connection_type:2;
     unsigned                          msie:1;
     unsigned                          msie6:1;
@@ -236,13 +241,15 @@ typedef struct {
     unsigned                          konqueror:1;
 } ngx_http_headers_in_t;
 
-
+//定义响应头
 typedef struct {
+    //待发送的的HTTP头部链表
     ngx_list_t                        headers;
-
+    //响应状态码 200 404
     ngx_uint_t                        status;
+    //响应状态行 "HTTP/1.1 201 CREATED"
     ngx_str_t                         status_line;
-
+    //所有定义的响应头，内存中数据也只在headers里面有一份，与请求头一样
     ngx_table_elt_t                  *server;
     ngx_table_elt_t                  *date;
     ngx_table_elt_t                  *content_length;
@@ -371,8 +378,9 @@ struct ngx_http_request_s {
                                          /* of ngx_http_upstream_state_t */
 
     ngx_pool_t                       *pool;
+    //指向未解析的HTTP头部
     ngx_buf_t                        *header_in;
-
+    //解析后的HTTP头部
     ngx_http_headers_in_t             headers_in;
     ngx_http_headers_out_t            headers_out;
 
@@ -521,6 +529,7 @@ struct ngx_http_request_s {
     unsigned                          main_filter_need_in_memory:1;
     unsigned                          filter_need_in_memory:1;
     unsigned                          filter_need_temporary:1;
+    //多线程下载和断点续传
     unsigned                          allow_ranges:1;
 
 #if (NGX_STAT_STUB)

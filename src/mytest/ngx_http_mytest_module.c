@@ -1,6 +1,10 @@
 #include <ngx_config.h>
 #include <ngx_core.h>
 #include <ngx_http.h>
+#include <ngx_string.h>
+#include <ngx_http_request.h>
+#include <ngx_hash.h>
+
 /**
  * 整个大致流程
  * 1,nginx读取到配置文件时，发现mytest模块
@@ -99,30 +103,42 @@ static ngx_int_t ngx_http_mytest_handler(ngx_http_request_t *r)
         //非法请求方式 状态码 405
         return NGX_HTTP_NOT_ALLOWED;
     }
+    //丢弃客户端发送来的HTTP包体内容
     ngx_int_t rc = ngx_http_discard_request_body(r);
     if (rc != NGX_OK) {
         return rc;
     }
 
     ngx_str_t type = ngx_string("text/plain");
-    ngx_str_t response = ngx_string("Hello World");
+    ngx_str_t response = ngx_string(r->method_name.data);
     r->headers_out.status = NGX_HTTP_OK;
     r->headers_out.content_length_n = response.len;
     r->headers_out.content_type = type;
-    
+    //自定义响应头
+    ngx_table_elt_t* p = ngx_list_push(&r->headers_out.headers);
+    p->hash = 1;
+    p->key.len = sizeof("codelover")-1;
+    p->key.data = (u_char*)"codelover";
+    p->value.len = sizeof("codelover")-1;
+    p->value.data = (u_char*)"codelover";
+
+    //发送响应头
     rc = ngx_http_send_header(r);
     if (rc == NGX_ERROR || rc > NGX_OK || r->header_only) {
         return rc;
     }
 
     ngx_buf_t *b;
+    //r->pool内存池
     b = ngx_create_temp_buf(r->pool, response.len);
     if (b == NULL) {
         return NGX_HTTP_INTERNAL_SERVER_ERROR;
     }
 
     ngx_memcpy(b->pos, response.data, response.len);
+    //必须设置好last指针，如果last和pos相等，是不会发送的
     b->last = b->pos + response.len;
+    //声明这是最后一块缓冲区
     b->last_buf = 1;
 
     ngx_chain_t out;

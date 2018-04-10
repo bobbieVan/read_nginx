@@ -43,6 +43,8 @@ struct ngx_buf_s {
     unsigned         mmap:1;
 
     unsigned         recycled:1;
+    //标志位，表明是否时文件
+    //如果是文件，将会从ngx_buf_t缓冲区中的file成员处获取实际文件
     unsigned         in_file:1;
     unsigned         flush:1;
     unsigned         sync:1;
@@ -55,7 +57,7 @@ struct ngx_buf_s {
     /* STUB */ int   num;
 };
 
-
+//只是用于容纳ngx_buf_t缓冲区，形成内存链表
 struct ngx_chain_s {
     ngx_buf_t    *buf;
     ngx_chain_t  *next;

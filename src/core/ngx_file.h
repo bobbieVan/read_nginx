@@ -14,20 +14,25 @@
 
 
 struct ngx_file_s {
+    //文件描述符
     ngx_fd_t                   fd;
+    //文件名称
     ngx_str_t                  name;
+    //文件大小资源等信息，实际上时linux的stat结构体
     ngx_file_info_t            info;
-
+    //偏移量，告诉nginx文件目前处理到什么地方，一般不设置，nginx框架会根据当前状态设置
     off_t                      offset;
+    //当前文件系统偏移量，一般不用设置，同样有nginx设置
     off_t                      sys_offset;
-
+    //日志对象
     ngx_log_t                 *log;
 
 #if (NGX_HAVE_FILE_AIO)
     ngx_event_aio_t           *aio;
 #endif
-
+    //未使用
     unsigned                   valid_info:1;
+    //发送大文件设置成1
     unsigned                   directio:1;
 };
 
