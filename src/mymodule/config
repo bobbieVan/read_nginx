@@ -1,0 +1,8 @@
+#仅仅在configure使用，一般是模块名
+ngx_addon_name=ngx_mymodule
+
+#保存所有模块名的数组，不能直接赋值覆盖，因为还有其他模块在里面
+HTTP_MODULES="$HTTP_MODULES ngx_http_mymodule_module"
+
+#新增模块的源码文件
+NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/ngx_http_mymodule_module.c"
