@@ -1,9 +1,9 @@
 
 CC =	gcc
-CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused -Werror -g 
+CXX = g++
+CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused -Werror -g
 CPP =	gcc -E
-LINK =	$(CC)
-
+LINK =	$(CXX)
 
 ALL_INCS = -I src/core \
 	-I src/event \
@@ -199,7 +199,7 @@ objs/nginx:	objs/src/core/nginx.o \
 	objs/src/http/modules/ngx_http_empty_gif_module.o \
 	objs/src/http/modules/ngx_http_browser_module.o \
 	objs/src/http/modules/ngx_http_upstream_ip_hash_module.o \
-	objs/addon/mymodule/ngx_http_mymodule_module.o \
+	objs/addon/mymodulecpp/ngx_http_mymodulecpp_module.o \
 	objs/ngx_modules.o
 
 	$(LINK) -o objs/nginx \
@@ -304,10 +304,10 @@ objs/nginx:	objs/src/core/nginx.o \
 	objs/src/http/modules/ngx_http_empty_gif_module.o \
 	objs/src/http/modules/ngx_http_browser_module.o \
 	objs/src/http/modules/ngx_http_upstream_ip_hash_module.o \
-	objs/addon/mymodule/ngx_http_mymodule_module.o \
+	objs/addon/mymodulecpp/ngx_http_mymodulecpp_module.o \
 	objs/ngx_modules.o \
 	-lpthread -lcrypt
-	
+
 
 
 objs/ngx_modules.o:	$(CORE_DEPS) \
@@ -1024,11 +1024,11 @@ objs/src/http/modules/ngx_http_upstream_ip_hash_module.o:	$(CORE_DEPS) $(HTTP_DE
 		src/http/modules/ngx_http_upstream_ip_hash_module.c
 
 
-objs/addon/mymodule/ngx_http_mymodule_module.o:	$(ADDON_DEPS) \
-	src/mymodule//ngx_http_mymodule_module.c
-	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
-		-o objs/addon/mymodule/ngx_http_mymodule_module.o \
-		src/mymodule//ngx_http_mymodule_module.c
+objs/addon/mymodulecpp/ngx_http_mymodulecpp_module.o:	$(ADDON_DEPS) \
+	src/mymodulecpp//ngx_http_mymodulecpp_module.cpp
+	$(CXX) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/mymodulecpp/ngx_http_mymodulecpp_module.o \
+		src/mymodulecpp//ngx_http_mymodulecpp_module.cpp
 
 
 manpage:	objs/nginx.8
