@@ -15,6 +15,21 @@
 static ngx_int_t ngx_http_mytest_handler(ngx_http_request_t *r);
 static char *
 ngx_http_mytest(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+//struct ngx_command_s {
+//    //配置项名字
+//    ngx_str_t             name;
+//    //配置项类型，type将指定配置项可以出现的位置，例如出现在server{},location{}，以及它可以携带的参数个数
+//    ngx_uint_t            type;
+//    //出现了name中指定的配置项后，会调用set处理配置项参数
+//    char               *(*set)(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+//    //在配置文件中的偏移量
+//    ngx_uint_t            conf;
+//    //用于使用预设的解析方法解析配置项，与conf配合使用
+//    ngx_uint_t            offset;
+//    //配置项读取后的处理方法
+//    void                 *post;
+//};
+
 //处理配置项
 static ngx_command_t ngx_http_mytest_commands[] = {
     {

@@ -15,8 +15,11 @@
 
 
 typedef struct {
+    //指针数组，每个元素指向所有HTTP模块create_main_conf方法产生的结构体
     void        **main_conf;
+    //..............................create_srv_conf..............
     void        **srv_conf;
+    //..............................create_loc_conf..............
     void        **loc_conf;
 } ngx_http_conf_ctx_t;
 

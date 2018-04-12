@@ -84,7 +84,6 @@ static ngx_int_t ngx_http_mymodule_handler(ngx_http_request_t *r)
     if (rc != NGX_OK) {
         return rc;
     }
-
     ngx_str_t type = ngx_string("text/plain");
     ngx_str_t response = ngx_string("codelover");
     r->headers_out.status = NGX_HTTP_OK;

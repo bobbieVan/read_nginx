@@ -1,0 +1,6 @@
+#使用nginx自带的配置解析函数读取config
+ngx_addon_name=autoconfig
+
+HTTP_MODULES="$HTTP_MODULES ngx_http_autoconfig_module"
+
+NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/ngx_http_autoconfig_module.c"

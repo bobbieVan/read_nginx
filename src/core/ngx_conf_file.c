@@ -1189,7 +1189,7 @@ ngx_conf_set_num_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     ngx_str_t        *value;
     ngx_conf_post_t  *post;
 
-
+    //获取要设置的参数位置
     np = (ngx_int_t *) (p + cmd->offset);
 
     if (*np != NGX_CONF_UNSET) {
@@ -1197,6 +1197,7 @@ ngx_conf_set_num_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     }
 
     value = cf->args->elts;
+    //把字符串转换成数字设置到自定义的结构体中
     *np = ngx_atoi(value[1].data, value[1].len);
     if (*np == NGX_ERROR) {
         return "invalid number";
