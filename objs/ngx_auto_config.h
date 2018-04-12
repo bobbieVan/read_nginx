@@ -1,4 +1,4 @@
-#define NGX_CONFIGURE " --add-module=src/autoconfig/ --without-http_rewrite_module --without-http_gzip_module"
+#define NGX_CONFIGURE " --add-module=src/upstreamtest/ --without-http_rewrite_module --without-http_gzip_module"
 
 #ifndef NGX_COMPILER
 #define NGX_COMPILER  "gcc 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.9) "

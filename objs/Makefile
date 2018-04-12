@@ -199,7 +199,7 @@ objs/nginx:	objs/src/core/nginx.o \
 	objs/src/http/modules/ngx_http_empty_gif_module.o \
 	objs/src/http/modules/ngx_http_browser_module.o \
 	objs/src/http/modules/ngx_http_upstream_ip_hash_module.o \
-	objs/addon/autoconfig/ngx_http_autoconfig_module.o \
+	objs/addon/upstreamtest/ngx_http_upstreamtest_module.o \
 	objs/ngx_modules.o
 
 	$(LINK) -o objs/nginx \
@@ -304,7 +304,7 @@ objs/nginx:	objs/src/core/nginx.o \
 	objs/src/http/modules/ngx_http_empty_gif_module.o \
 	objs/src/http/modules/ngx_http_browser_module.o \
 	objs/src/http/modules/ngx_http_upstream_ip_hash_module.o \
-	objs/addon/autoconfig/ngx_http_autoconfig_module.o \
+	objs/addon/upstreamtest/ngx_http_upstreamtest_module.o \
 	objs/ngx_modules.o \
 	-lpthread -lcrypt
 	
@@ -1024,11 +1024,11 @@ objs/src/http/modules/ngx_http_upstream_ip_hash_module.o:	$(CORE_DEPS) $(HTTP_DE
 		src/http/modules/ngx_http_upstream_ip_hash_module.c
 
 
-objs/addon/autoconfig/ngx_http_autoconfig_module.o:	$(ADDON_DEPS) \
-	src/autoconfig//ngx_http_autoconfig_module.c
+objs/addon/upstreamtest/ngx_http_upstreamtest_module.o:	$(ADDON_DEPS) \
+	src/upstreamtest//ngx_http_upstreamtest_module.c
 	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
-		-o objs/addon/autoconfig/ngx_http_autoconfig_module.o \
-		src/autoconfig//ngx_http_autoconfig_module.c
+		-o objs/addon/upstreamtest/ngx_http_upstreamtest_module.o \
+		src/upstreamtest//ngx_http_upstreamtest_module.c
 
 
 manpage:	objs/nginx.8
